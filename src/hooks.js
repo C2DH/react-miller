@@ -2,8 +2,7 @@ import { useMemoCompare } from './compare'
 import { shallowEqualObjects } from 'shallow-equal'
 import { translateMillerInstance } from './translate'
 import { StoryState, StoriesState } from './state'
-// import { MillerContext } from './internal'
-import { rj, useRunRj } from 'react-rocketjump'
+import { useRunRj } from 'react-rocketjump'
 
 /**
  * @description Grab a story by/slug id from Miller API don't handle
@@ -53,10 +52,10 @@ export function useCachedStories(
     filters: JSON.stringify(params.filters),
   }
   const memoParams = useMemoCompare(preparedParams, shallowEqualObjects)
-  const [{ stories, pagination, loading, error }, actions] = useRunRj(StoriesState, [
-    memoParams,
-    shouldCleanBeforeRun,
-  ])
+  const [
+    { stories, pagination, loading, error },
+    actions,
+  ] = useRunRj(StoriesState, [memoParams, shouldCleanBeforeRun])
   const translatedStories = translateMillerInstance(
     stories,
     language,
