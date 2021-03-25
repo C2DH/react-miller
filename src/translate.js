@@ -2,7 +2,7 @@ export function translateMillerInstance(
   data,
   language,
   defaultLanguage,
-  langs = [],
+  langs = ['fr_FR', 'de_DE'],
 ) {
   // Primitive types can't translate them
   const dataType = typeof data
