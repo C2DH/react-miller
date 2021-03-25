@@ -1,7 +1,7 @@
 import { useMemoCompare } from './compare'
 import { shallowEqualObjects } from 'shallow-equal'
 import { translateMillerInstance } from './translate'
-import { StoryState, StoriesState } from './state'
+import { StoryState, StoriesState, DocumentState } from './state'
 import { useRunRj } from 'react-rocketjump'
 
 /**
@@ -62,4 +62,38 @@ export function useCachedStories(
     defaultLanguage,
   )
   return [translatedStories, pagination, { error, loading, ...actions }]
+}
+
+/**
+ * @description Grab a document by/slug id from Miller API. Usage as hook:
+ * ```
+ *  const { i18n } = useTranslation()
+ *  const [homeStory, { error, pending }] = useCacheDocument('id-or-slug', {
+ *     language: i18n.language,
+ *     defaultLanguage: i18n.options.defaultLocale
+ *  })
+ * ```
+ *
+ * @param {Number|String} id Document ID or Slug
+ * @param {object} [configs] Language and other configurations
+ * @returns {[object]}
+ */
+export function useCachedDocument(
+  id,
+  { language = 'en_GB', defaultLanguage = 'en_GB' },
+  shouldCleanBeforeRun = true,
+) {
+  const documentId = typeof id === 'number' ? String(id) : id
+  const [{ data, error, pending }, actions] = useRunRj(
+    DocumentState,
+    [documentId],
+    shouldCleanBeforeRun,
+  )
+  const translatedDocument = translateMillerInstance(
+    data,
+    language,
+    defaultLanguage,
+  )
+  console.info('useCachedDocument', data, translatedDocument)
+  return [translatedDocument, { error, pending, ...actions }]
 }

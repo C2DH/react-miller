@@ -3,7 +3,7 @@ import rjCache, { SessionStorageStore } from 'react-rocketjump/plugins/cache'
 import rjList, {
   limitOffsetPaginationAdapter,
 } from 'react-rocketjump/plugins/list'
-import { getStory, getStories } from './api'
+import { getStory, getStories, getDocument } from './api'
 
 export const StoryState = rj(
   rjCache({
@@ -23,10 +23,10 @@ export const StoryState = rj(
 )
 
 export const StoriesState = rj(
-  // rjCache({
-  //   ns: 'millerStories',
-  //   size: 50,
-  // }),
+  rjCache({
+    ns: 'millerStories',
+    size: 50,
+  }),
   rjList({
     pageSize: 50,
     pagination: limitOffsetPaginationAdapter,
@@ -43,4 +43,14 @@ export const StoriesState = rj(
   },
 )
 
-export default StoryState
+export const DocumentState = rj(
+  // rjCache({
+  //   ns: 'MillerDocument',
+  //   size: 100,
+  //   store: SessionStorageStore,
+  // }),
+  {
+    name: 'MillerDocument',
+    effect: (id) => getDocument(id),
+  },
+)

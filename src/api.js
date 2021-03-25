@@ -11,3 +11,8 @@ export function getStories(params = { parser: 'yaml' }) {
     return res.data
   })
 }
+
+export function getDocument(id) {
+  console.info('getDocument URL:', `/api/document/${id}`)
+  return axios.get(`/api/document/${id}`).then((res) => res.data)
+}
