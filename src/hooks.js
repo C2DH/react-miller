@@ -1,7 +1,12 @@
 import { useMemoCompare } from './compare'
 import { shallowEqualObjects } from 'shallow-equal'
 import { translateMillerInstance } from './translate'
-import { StoryState, StoriesState, DocumentState } from './state'
+import {
+  StoryState,
+  StoriesState,
+  DocumentState,
+  DocumentsState,
+} from './state'
 import { useRunRj } from 'react-rocketjump'
 
 /**
@@ -96,4 +101,53 @@ export function useCachedDocument(
   )
   console.info('useCachedDocument', data, translatedDocument)
   return [translatedDocument, { error, pending, ...actions }]
+}
+
+/**
+ * @description Grab a list of documents. Usage as hook:
+ * ```
+ *  const { i18n } = useTranslation()
+ *  const [{ documents, loading, allFacets }, { fetchMore }] = useDocuments({
+ *     language: i18n.language,
+ *     defaultLanguage: i18n.options.defaultLocale
+ *  })
+ * ```
+ *
+ * @param {Object} - params
+ * @param {Object} - [configs] Language and other configurations, optional
+ * @returns {[Object]}
+ */
+export function useDocuments(
+  params = { filters: {} },
+  config = { language: 'en_GB', defaultLanguage: 'en_GB' },
+  shouldCleanBeforeRun = true,
+) {
+  const { language, defaultLanguage } = config
+  const preparedParams = {
+    filters: JSON.stringify(params.filters),
+    limit: isNaN(params.limit)
+      ? 10
+      : Math.min(Math.max(-1, params.limit), 1000),
+  }
+
+  const memoParams = useMemoCompare(preparedParams, shallowEqualObjects)
+  console.info(
+    'useDocuments received params:',
+    memoParams,
+    'config:',
+    language,
+    defaultLanguage,
+  )
+
+  const [{ documents, error, loading, pagination }, actions] = useRunRj(
+    DocumentsState,
+    [memoParams],
+    shouldCleanBeforeRun,
+  )
+  const translatedDocuments = translateMillerInstance(
+    documents,
+    language,
+    defaultLanguage,
+  )
+  return [translatedDocuments, pagination, { error, loading, ...actions }]
 }
