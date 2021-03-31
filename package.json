@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "API client for Miller django app",
   "author": "c2dh",
-  "license": "c2dh",
+  "license": "GNU AFFERO GENERAL PUBLIC LICENSE",
   "repository": "",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",
