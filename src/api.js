@@ -16,3 +16,9 @@ export function getDocument(id) {
   console.info('getDocument URL:', `/api/document/${id}`)
   return axios.get(`/api/document/${id}`).then((res) => res.data)
 }
+
+export function getDocuments(params) {
+  return axios.get(`/api/document/`, { params }).then((res) => {
+    return res.data
+  })
+}
