@@ -1,10 +1,10 @@
 {
   "name": "react-miller",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "API client for Miller django app",
-  "author": "c2dh",
+  "author": "c2dh (https://c2dh.uni.lu)",
   "license": "GNU AFFERO GENERAL PUBLIC LICENSE",
-  "repository": "",
+  "repository": "https://github.com/C2DH/react-miller",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",
   "source": "src/index.js",

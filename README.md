@@ -19,40 +19,42 @@ npm install --save react-miller
 Note that `react-miller` hooks require a `language` param. Our implementation is usually coupled together with 'react-i18next' that provide us with a nice `useTranslation`
 hook, but feel free to use whatever it suits your needs!
 
-### useCachedStory
+### useStory
 Used to retrieve one single story, it is a hook for the the endpoint `/api/story/<id>`)
 
 ```jsx
   import React from 'react'
-  import { useCachedStory } from 'react-miller'
+  import { useStory } from 'react-miller'
 
   const Home = () => {
-    const [homeStory, { error }] = useCachedStory('home', {
+    const [homeStory, { error }] = useStory('home', {
       language: 'it_IT',
       defaultLanguage: 'en_GB',
+      cached: true,
     })
     return (
-      <div className="Home">{homeStory.title}</div>
+      <h1 className="Home">{homeStory.title}</h1>
     )
   }
 
 ```
 
-### useCachedStories
+### useStories
 Used to retrieve multiple stories, with optional filters.
 
 ```jsx
   import React from 'react'
   import { useCachedStories } from 'react-miller'
-  
+
   const ListOfStories = () => {
-    const [stories, pagination, { error }] = useCachedStories({
+    const [stories, pagination, { error }] = useStories({
       filters: {
         tags__slug: 'theme'
       }
     }, {
       language: 'it_IT',
       defaultLanguage: 'en_GB',
+      cached: true,
     })
 
     if (!stories) {
@@ -60,10 +62,10 @@ Used to retrieve multiple stories, with optional filters.
     }
 
     return (
-      <div className="ListOfStories">
+      <ol className="ListOfStories">
         {stories.map((story) => (
-          <div key={story.id}>{story.title}</div>
+          <li key={story.id}>{story.title}</li>
         )}
-      </div>
+      </ol>
     )
   }
