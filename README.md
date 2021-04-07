@@ -2,7 +2,7 @@
 
 > Made with create-react-library
 
-[![NPM](https://img.shields.io/npm/v/react-miller.svg)](https://www.npmjs.com/package/react-miller) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![NPM](https://img.shields.io/npm/v/@c2dh/react-miller.svg)](https://www.npmjs.com/package/@c2dh/react-miller) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 A simple piece of code that deals with effects while loading Miller REST api instance for **stories** and for **documents**
 
