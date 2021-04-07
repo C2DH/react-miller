@@ -5,7 +5,12 @@ import rjList, {
 } from 'react-rocketjump/plugins/list'
 import { getStory, getStories, getDocument, getDocuments } from './api'
 
-export const StoryState = rj(
+export const StoryState = rj({
+  name: 'MillerStory',
+  effect: (id, params) => getStory(id, params),
+})
+
+export const StoryCachedState = rj(
   rjCache({
     ns: 'millerStory',
     size: 100,
@@ -13,16 +18,28 @@ export const StoryState = rj(
   }),
   {
     name: 'MillerStory',
-    effect: (id, rawParams = {}) => {
-      const { withChapters, language, defaultLanguage, ...params } = rawParams
-      return getStory(id, params).then(({ data }) => {
-        return data
-      })
-    },
+    effect: (id, params) => getStory(id, params),
   },
 )
 
 export const StoriesState = rj(
+  rjList({
+    pageSize: 50,
+    pagination: limitOffsetPaginationAdapter,
+  }),
+  {
+    name: 'MillerStories',
+    effect: (params) => {
+      return getStories(params)
+    },
+    computed: {
+      count: 'getCount',
+      stories: 'getList',
+    },
+  },
+)
+
+export const StoriesCachedState = rj(
   rjCache({
     ns: 'millerStories',
     size: 50,
