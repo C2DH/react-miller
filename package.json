@@ -1,10 +1,7 @@
 {
-  "name": "react-miller",
+  "name": "@c2dh/react-miller",
   "version": "0.0.1",
   "description": "API client for Miller django app",
-  "author": "c2dh (https://c2dh.uni.lu)",
-  "license": "GNU AFFERO GENERAL PUBLIC LICENSE",
-  "repository": "https://github.com/C2DH/react-miller",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",
   "source": "src/index.js",
@@ -45,7 +42,7 @@
     "npm-run-all": "^4.1.5",
     "prettier": "^2.0.4",
     "react-rocketjump": "^2.6.2",
-    "react-scripts": "^3.4.1",
+    "react-scripts": "^4.0.3",
     "shallow-equal": "^1.2.1"
   },
   "files": [
@@ -54,5 +51,18 @@
   "dependencies": {
     "axios": "^0.21.1"
   },
-  "private": true
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/C2DH/react-miller.git"
+  },
+  "keywords": [
+    "miller",
+    "rest-api"
+  ],
+  "author": "c2dh (https://c2dh.uni.lu)",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/C2DH/react-miller/issues"
+  },
+  "homepage": "https://github.com/C2DH/react-miller#readme"
 }

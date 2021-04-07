@@ -11,7 +11,7 @@ We make use of the nice library [react-rocketjump](https://inmagik.github.io/rea
 ## Install
 
 ```bash
-npm install --save react-miller
+npm install --save @c2dh/react-miller
 ```
 
 
