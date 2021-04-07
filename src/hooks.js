@@ -3,39 +3,60 @@ import { shallowEqualObjects } from 'shallow-equal'
 import { translateMillerInstance } from './translate'
 import {
   StoryState,
+  StoryCachedState,
   StoriesState,
+  StoriesCachedState,
   DocumentState,
   DocumentsState,
 } from './state'
 import { useRunRj } from 'react-rocketjump'
 
 /**
- * @description Grab a story by/slug id from Miller API don't handle
- * a local state is only a pointer to current cached element. Usage as hook:
+ * @description Grab a story by/slug id from Miller API
+ * If config.cached is set, use the CacheStoryState behind the scenes.
+ * Document Usage as hook:
  * ```
  *  const { i18n } = useTranslation()
  *  const [homeStory, { error }] = useCacheStory('home', {
+ *    parser: 'yaml'
+ *  }, {
  *     language: i18n.language,
  *     defaultLanguage: i18n.options.defaultLocale
  *  })
  * ```
  *
  * @param {Number|String} id Story ID or Slug
- * @param {object} [params] Additional query string params
- * @param {object} [configs] Language and other configurations
- * @returns {[object]}
+ * @param {Object} [params] Additional query string params
+ * @param {Object} [configs] Language and other configurations
+ * @param {Boolean} [shouldCleanBeforeRun]
+ * @returns {[Object]}
  */
-export function useCachedStory(
+export function useStory(
   id,
   params = {},
-  { language = 'en_GB', defaultLanguage = 'en_GB' },
+  configs = {},
   shouldCleanBeforeRun = true,
 ) {
+  const {
+    language = 'en_GB',
+    defaultLanguage = 'en_GB',
+    cached = false,
+  } = configs
   const memoParams = useMemoCompare(params, shallowEqualObjects)
-  console.info('memoParams', memoParams)
+  if (!id) {
+    return [null, { error: 'id not defined', pending: false }]
+  }
   const storyId = typeof id === 'number' ? String(id) : id
+  // console.info(
+  //   'useStory()',
+  //   'id:', id,
+  //   'memoParams:', memoParams,
+  //   'language:', language,
+  //   'defaultLanguage:', defaultLanguage,
+  //   'cached:', cached
+  // )
   const [{ data, error, pending }, actions] = useRunRj(
-    StoryState,
+    cached ? StoryCachedState : StoryState,
     [storyId, memoParams],
     shouldCleanBeforeRun,
     (state) => state,
@@ -48,19 +69,32 @@ export function useCachedStory(
   return [translatedStory, { error, pending, ...actions }]
 }
 
-export function useCachedStories(
+/**
+ * @description load different stories
+ * @param {Object} [params] Additional query string params
+ * @param {Object} [configs] Language and other configurations
+ * @param {Boolean} [shouldCleanBeforeRun]
+ * @returns {[Object]}
+ */
+export function useStories(
   params = { filters: {} },
-  { language = 'en_GB', defaultLanguage = 'en_GB' } = {},
+  configs = {},
   shouldCleanBeforeRun = true,
 ) {
+  const {
+    language = 'en_GB',
+    defaultLanguage = 'en_GB',
+    cached = false,
+  } = configs
   const preparedParams = {
     filters: JSON.stringify(params.filters),
   }
   const memoParams = useMemoCompare(preparedParams, shallowEqualObjects)
-  const [
-    { stories, pagination, loading, error },
-    actions,
-  ] = useRunRj(StoriesState, [memoParams, shouldCleanBeforeRun])
+  const [{ stories, pagination, loading, error }, actions] = useRunRj(
+    cached ? StoriesCachedState : StoriesState,
+    [memoParams],
+    shouldCleanBeforeRun,
+  )
   const translatedStories = translateMillerInstance(
     stories,
     language,
@@ -83,11 +117,8 @@ export function useCachedStories(
  * @param {object} [configs] Language and other configurations
  * @returns {[object]}
  */
-export function useCachedDocument(
-  id,
-  { language = 'en_GB', defaultLanguage = 'en_GB' },
-  shouldCleanBeforeRun = true,
-) {
+export function useDocument(id, configs = {}, shouldCleanBeforeRun = true) {
+  const { language = 'en_GB', defaultLanguage = 'en_GB' } = configs
   const documentId = typeof id === 'number' ? String(id) : id
   const [{ data, error, pending }, actions] = useRunRj(
     DocumentState,
@@ -119,10 +150,10 @@ export function useCachedDocument(
  */
 export function useDocuments(
   params = { filters: {} },
-  config = { language: 'en_GB', defaultLanguage: 'en_GB' },
+  configs = {},
   shouldCleanBeforeRun = true,
 ) {
-  const { language, defaultLanguage } = config
+  const { language = 'en_GB', defaultLanguage = 'en_GB' } = configs
   const preparedParams = {
     filters: JSON.stringify(params.filters),
     limit: isNaN(params.limit)
