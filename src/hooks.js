@@ -149,7 +149,7 @@ export function useDocument(id, configs = {}, shouldCleanBeforeRun = true) {
  * @returns {[Object]}
  */
 export function useDocuments(
-  params = { filters: {} },
+  params = { filters: {}, q: null },
   configs = {},
   shouldCleanBeforeRun = true,
 ) {
@@ -160,7 +160,13 @@ export function useDocuments(
       ? 10
       : Math.min(Math.max(-1, params.limit), 1000),
   }
-
+  if (
+    typeof params.q === 'string' &&
+    params.q.length > 0 &&
+    params.q.length < 100
+  ) {
+    preparedParams.q = params.q
+  }
   const memoParams = useMemoCompare(preparedParams, shallowEqualObjects)
   console.info(
     'useDocuments received params:',
