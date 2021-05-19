@@ -33,7 +33,7 @@ Used to retrieve one single story, it is a hook for the the endpoint `/api/story
       cached: true,
     })
     return (
-      <h1 className="Home">{homeStory.title}</h1>
+      <h1 className="Home">{homeStory?.title}</h1>
     )
   }
 
@@ -69,3 +69,8 @@ Used to retrieve multiple stories, with optional filters.
       </ol>
     )
   }
+```
+
+## Development
+From the repo folder, just do `yarn link` then `yarn start`. To use the development version into your project,
+go to your project base folder and do `yarn link @c2dh/react-miller`
