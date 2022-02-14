@@ -1,9 +1,9 @@
 import axios from 'axios'
 
 export function getStory(id, params = { parser: 'yaml' }, timeout = 0) {
-  console.info('getStory URL:', `/api/story/${id}`, params)
+  console.info('getStory URL:', `/api/story/${id}/`, params)
   return axios
-    .get(`/api/story/${id}`, { params, timeout })
+    .get(`/api/story/${id}/`, { params, timeout })
     .then(({ data }) => data)
 }
 
@@ -15,8 +15,8 @@ export function getStories(params = { parser: 'yaml' }) {
 }
 
 export function getDocument(id) {
-  console.info('getDocument URL:', `/api/document/${id}`)
-  return axios.get(`/api/document/${id}`).then((res) => res.data)
+  console.info('getDocument URL:', `/api/document/${id}/`)
+  return axios.get(`/api/document/${id}/`).then((res) => res.data)
 }
 
 export function getDocuments(params) {
