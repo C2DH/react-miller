@@ -9,7 +9,7 @@ import {
   DocumentState,
   DocumentsState,
 } from './state'
-import { useRunRj } from 'react-rocketjump'
+import { useRunRj, deps } from 'react-rocketjump'
 
 /**
  * @description Grab a story by/slug id from Miller API
@@ -154,11 +154,14 @@ export function useDocuments(
   shouldCleanBeforeRun = true,
 ) {
   const { language = 'en_GB', defaultLanguage = 'en_GB' } = configs
+  const offset = isNaN(params.offset) ? 0 : params.offset;
   const preparedParams = {
     filters: JSON.stringify(params.filters),
     limit: isNaN(params.limit)
       ? 10
       : Math.min(Math.max(-1, params.limit), 1000),
+    orderby: typeof params.orderby === 'string' ? params.orderby : undefined,
+    offset
   }
   if (
     typeof params.q === 'string' &&
@@ -178,7 +181,7 @@ export function useDocuments(
 
   const [{ documents, error, loading, pagination }, actions] = useRunRj(
     DocumentsState,
-    [memoParams],
+    [ deps.withMeta(memoParams, {append: offset !== 0}) ],
     shouldCleanBeforeRun,
   )
   const translatedDocuments = translateMillerInstance(
