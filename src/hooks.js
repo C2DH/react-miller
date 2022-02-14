@@ -119,7 +119,7 @@ export function useStories(
  * @param {object} [configs] Language and other configurations
  * @returns {[object]}
  */
-export function useDocument(id, configs = {}, shouldCleanBeforeRun = true) {
+export function useDocument(id = null, configs = {}, shouldCleanBeforeRun = true) {
   const {
     language = 'en_GB',
     defaultLanguage = 'en_GB',
@@ -128,7 +128,7 @@ export function useDocument(id, configs = {}, shouldCleanBeforeRun = true) {
   const documentId = typeof id === 'number' ? String(id) : id
   const [{ data, error, pending }, actions] = useRunRj(
     cached ? DocumentCachedState : DocumentState,
-    [documentId],
+    [ deps.maybeNull(documentId) ],
     shouldCleanBeforeRun,
   )
   const translatedDocument = translateMillerInstance(
