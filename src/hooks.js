@@ -7,7 +7,9 @@ import {
   StoriesState,
   StoriesCachedState,
   DocumentState,
+  DocumentCachedState,
   DocumentsState,
+  DocumentsCachedState
 } from './state'
 import { useRunRj, deps } from 'react-rocketjump'
 
@@ -118,10 +120,14 @@ export function useStories(
  * @returns {[object]}
  */
 export function useDocument(id, configs = {}, shouldCleanBeforeRun = true) {
-  const { language = 'en_GB', defaultLanguage = 'en_GB' } = configs
+  const {
+    language = 'en_GB',
+    defaultLanguage = 'en_GB',
+    cached = false,
+  } = configs;
   const documentId = typeof id === 'number' ? String(id) : id
   const [{ data, error, pending }, actions] = useRunRj(
-    DocumentState,
+    cached ? DocumentCachedState : DocumentState,
     [documentId],
     shouldCleanBeforeRun,
   )
@@ -130,7 +136,6 @@ export function useDocument(id, configs = {}, shouldCleanBeforeRun = true) {
     language,
     defaultLanguage,
   )
-  console.info('useCachedDocument', data, translatedDocument)
   return [translatedDocument, { error, pending, ...actions }]
 }
 
@@ -153,7 +158,11 @@ export function useDocuments(
   configs = {},
   shouldCleanBeforeRun = true,
 ) {
-  const { language = 'en_GB', defaultLanguage = 'en_GB' } = configs
+  const {
+    language = 'en_GB',
+    defaultLanguage = 'en_GB',
+    cached = false,
+  } = configs;
   const offset = isNaN(params.offset) ? 0 : params.offset;
   const preparedParams = {
     filters: JSON.stringify(params.filters),
@@ -171,16 +180,16 @@ export function useDocuments(
     preparedParams.q = params.q
   }
   const memoParams = useMemoCompare(preparedParams, shallowEqualObjects)
-  console.info(
-    'useDocuments received params:',
-    memoParams,
-    'config:',
-    language,
-    defaultLanguage,
-  )
+  // console.info(
+  //   'useDocuments received params:',
+  //   memoParams,
+  //   'config:',
+  //   language,
+  //   defaultLanguage,
+  // )
 
   const [{ documents, error, loading, pagination }, actions] = useRunRj(
-    DocumentsState,
+    cached ? DocumentsCachedState : DocumentsState,
     [ deps.withMeta(memoParams, {append: offset !== 0}) ],
     shouldCleanBeforeRun,
   )

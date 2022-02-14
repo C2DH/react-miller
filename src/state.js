@@ -61,15 +61,22 @@ export const StoriesCachedState = rj(
 )
 
 export const DocumentState = rj(
-  // rjCache({
-  //   ns: 'MillerDocument',
-  //   size: 100,
-  //   store: SessionStorageStore,
-  // }),
   {
     name: 'MillerDocument',
-    effect: (id) => getDocument(id),
-  },
+    effect: getDocument
+  }
+)
+
+export const DocumentCachedState = rj(
+  rjCache({
+    ns: 'millerDocument',
+    size: 100,
+    store: SessionStorageStore
+  }),
+  {
+    name: 'MillerDocument',
+    effect: getDocument
+  }
 )
 
 export const DocumentsState = rj(
@@ -79,12 +86,29 @@ export const DocumentsState = rj(
   }),
   {
     name: 'MillerDocuments',
-    effect: (params) => {
-      return getDocuments(params)
-    },
+    effect: getDocuments,
     computed: {
       count: 'getCount',
       documents: 'getList',
     },
   },
+)
+
+export const DocumentsCachedState = rj(
+  rjCache({
+    ns: 'millerDocuments',
+    size: 50
+  }),
+  rjList({
+    pageSize: 50,
+    pagination: limitOffsetPaginationAdapter
+  }),
+  {
+    name: 'MillerDocuments',
+    effect: getDocuments,
+    computed: {
+      count: 'getCount',
+      documents: 'getList'
+    }
+  }
 )
