@@ -80,6 +80,45 @@ export const DocumentCachedState = rj(
 )
 
 export const DocumentsState = rj(
+  {
+    name: 'MillerDocuments',
+    effect: getDocuments,
+    selectors: ({ getData }) => ({
+      getList: state => getData(state)?.results,
+      getCount: state => getData(state)?.count,
+      getFacets: state => getData(state)?.facets
+    }),
+    computed: {
+      count: 'getCount',
+      documents: 'getList',
+      facets: 'getFacets'
+    },
+  },
+)
+
+export const DocumentsCachedState = rj(
+  rjCache({
+    ns: 'millerDocuments',
+    size: 50
+  }),
+  {
+    name: 'MillerDocuments',
+    effect: getDocuments,
+    selectors: ({ getData }) => ({
+      getList: state => getData(state)?.results,
+      getCount: state => getData(state)?.count,
+      getFacets: state => getData(state)?.facets
+    }),
+    computed: {
+      count: 'getCount',
+      documents: 'getList',
+      facets: 'getFacets'
+    },
+  },
+)
+
+
+export const DocumentsPaginatedState = rj(
   rjList({
     pageSize: 50,
     pagination: limitOffsetPaginationAdapter,
@@ -89,14 +128,14 @@ export const DocumentsState = rj(
     effect: getDocuments,
     computed: {
       count: 'getCount',
-      documents: 'getList',
+      documents: 'getList'
     },
   },
 )
 
-export const DocumentsCachedState = rj(
+export const DocumentsPaginatedCachedState = rj(
   rjCache({
-    ns: 'millerDocuments',
+    ns: 'millerPaginatedDocuments',
     size: 50
   }),
   rjList({

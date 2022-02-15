@@ -9,7 +9,9 @@ import {
   DocumentState,
   DocumentCachedState,
   DocumentsState,
-  DocumentsCachedState
+  DocumentsCachedState,
+  DocumentsPaginatedState,
+  DocumentsPaginatedCachedState
 } from './state'
 import { useRunRj, deps } from 'react-rocketjump'
 
@@ -162,6 +164,8 @@ export function useDocuments(
     language = 'en_GB',
     defaultLanguage = 'en_GB',
     cached = false,
+    paginated = false,
+    translated = false
   } = configs;
   const offset = isNaN(params.offset) ? 0 : params.offset;
   const preparedParams = {
@@ -170,6 +174,7 @@ export function useDocuments(
       ? 10
       : Math.min(Math.max(-1, params.limit), 1000),
     orderby: typeof params.orderby === 'string' ? params.orderby : undefined,
+    facets: typeof params.facets === 'string' ? params.facets : undefined,
     offset
   }
   if (
@@ -188,15 +193,17 @@ export function useDocuments(
   //   defaultLanguage,
   // )
 
-  const [{ documents, error, loading, pagination }, actions] = useRunRj(
-    cached ? DocumentsCachedState : DocumentsState,
+  const [{ documents, facets, error, loading, pagination, count }, actions] = useRunRj(
+    paginated
+      ? (cached ? DocumentsPaginatedCachedState : DocumentsPaginatedState)
+      : (cached ? DocumentsCachedState : DocumentsState),
     [ deps.withMeta(memoParams, {append: offset !== 0}) ],
     shouldCleanBeforeRun,
   )
-  const translatedDocuments = translateMillerInstance(
+  const translatedDocuments = translated ? translateMillerInstance(
     documents,
     language,
     defaultLanguage,
-  )
-  return [translatedDocuments, pagination, { error, loading, ...actions }]
+  ) : documents;
+  return [translatedDocuments, pagination, { facets, count, error, loading, ...actions }]
 }
