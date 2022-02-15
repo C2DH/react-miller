@@ -156,7 +156,7 @@ export function useDocument(id = null, configs = {}, shouldCleanBeforeRun = true
  * @returns {[Object]}
  */
 export function useDocuments(
-  params = { filters: {}, q: null },
+  params = { filters: {}, exclude: {}, q: null },
   configs = {},
   shouldCleanBeforeRun = true,
 ) {
@@ -170,6 +170,7 @@ export function useDocuments(
   const offset = isNaN(params.offset) ? 0 : params.offset;
   const preparedParams = {
     filters: JSON.stringify(params.filters),
+    exclude: JSON.stringify(params.exclude),
     limit: isNaN(params.limit)
       ? 10
       : Math.min(Math.max(-1, params.limit), 1000),
