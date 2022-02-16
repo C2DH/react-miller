@@ -7,9 +7,13 @@ import {
   StoriesState,
   StoriesCachedState,
   DocumentState,
+  DocumentCachedState,
   DocumentsState,
+  DocumentsCachedState,
+  DocumentsPaginatedState,
+  DocumentsPaginatedCachedState
 } from './state'
-import { useRunRj } from 'react-rocketjump'
+import { useRunRj, deps } from 'react-rocketjump'
 
 /**
  * @description Grab a story by/slug id from Miller API
@@ -117,12 +121,16 @@ export function useStories(
  * @param {object} [configs] Language and other configurations
  * @returns {[object]}
  */
-export function useDocument(id, configs = {}, shouldCleanBeforeRun = true) {
-  const { language = 'en_GB', defaultLanguage = 'en_GB' } = configs
+export function useDocument(id = null, configs = {}, shouldCleanBeforeRun = true) {
+  const {
+    language = 'en_GB',
+    defaultLanguage = 'en_GB',
+    cached = false,
+  } = configs;
   const documentId = typeof id === 'number' ? String(id) : id
   const [{ data, error, pending }, actions] = useRunRj(
-    DocumentState,
-    [documentId],
+    cached ? DocumentCachedState : DocumentState,
+    [ deps.maybeNull(documentId) ],
     shouldCleanBeforeRun,
   )
   const translatedDocument = translateMillerInstance(
@@ -130,7 +138,6 @@ export function useDocument(id, configs = {}, shouldCleanBeforeRun = true) {
     language,
     defaultLanguage,
   )
-  console.info('useCachedDocument', data, translatedDocument)
   return [translatedDocument, { error, pending, ...actions }]
 }
 
@@ -149,16 +156,27 @@ export function useDocument(id, configs = {}, shouldCleanBeforeRun = true) {
  * @returns {[Object]}
  */
 export function useDocuments(
-  params = { filters: {}, q: null },
+  params = { filters: {}, exclude: {}, q: null },
   configs = {},
   shouldCleanBeforeRun = true,
 ) {
-  const { language = 'en_GB', defaultLanguage = 'en_GB' } = configs
+  const {
+    language = 'en_GB',
+    defaultLanguage = 'en_GB',
+    cached = false,
+    paginated = false,
+    translated = false
+  } = configs;
+  const offset = isNaN(params.offset) ? 0 : params.offset;
   const preparedParams = {
     filters: JSON.stringify(params.filters),
+    exclude: JSON.stringify(params.exclude),
     limit: isNaN(params.limit)
       ? 10
       : Math.min(Math.max(-1, params.limit), 1000),
+    orderby: typeof params.orderby === 'string' ? params.orderby : undefined,
+    facets: typeof params.facets === 'string' ? params.facets : undefined,
+    offset
   }
   if (
     typeof params.q === 'string' &&
@@ -168,23 +186,25 @@ export function useDocuments(
     preparedParams.q = params.q
   }
   const memoParams = useMemoCompare(preparedParams, shallowEqualObjects)
-  console.info(
-    'useDocuments received params:',
-    memoParams,
-    'config:',
-    language,
-    defaultLanguage,
-  )
+  // console.info(
+  //   'useDocuments received params:',
+  //   memoParams,
+  //   'config:',
+  //   language,
+  //   defaultLanguage,
+  // )
 
-  const [{ documents, error, loading, pagination }, actions] = useRunRj(
-    DocumentsState,
-    [memoParams],
+  const [{ documents, facets, error, loading, pagination, count }, actions] = useRunRj(
+    paginated
+      ? (cached ? DocumentsPaginatedCachedState : DocumentsPaginatedState)
+      : (cached ? DocumentsCachedState : DocumentsState),
+    [ deps.withMeta(memoParams, {append: offset !== 0}) ],
     shouldCleanBeforeRun,
   )
-  const translatedDocuments = translateMillerInstance(
+  const translatedDocuments = translated ? translateMillerInstance(
     documents,
     language,
     defaultLanguage,
-  )
-  return [translatedDocuments, pagination, { error, loading, ...actions }]
+  ) : documents;
+  return [translatedDocuments, pagination, { facets, count, error, loading, ...actions }]
 }

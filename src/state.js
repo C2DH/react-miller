@@ -61,30 +61,93 @@ export const StoriesCachedState = rj(
 )
 
 export const DocumentState = rj(
-  // rjCache({
-  //   ns: 'MillerDocument',
-  //   size: 100,
-  //   store: SessionStorageStore,
-  // }),
   {
     name: 'MillerDocument',
-    effect: (id) => getDocument(id),
-  },
+    effect: getDocument
+  }
+)
+
+export const DocumentCachedState = rj(
+  rjCache({
+    ns: 'millerDocument',
+    size: 100,
+    store: SessionStorageStore
+  }),
+  {
+    name: 'MillerDocument',
+    effect: getDocument
+  }
 )
 
 export const DocumentsState = rj(
+  {
+    name: 'MillerDocuments',
+    effect: getDocuments,
+    selectors: ({ getData }) => ({
+      getList: state => getData(state)?.results,
+      getCount: state => getData(state)?.count,
+      getFacets: state => getData(state)?.facets
+    }),
+    computed: {
+      count: 'getCount',
+      documents: 'getList',
+      facets: 'getFacets'
+    },
+  },
+)
+
+export const DocumentsCachedState = rj(
+  rjCache({
+    ns: 'millerDocuments',
+    size: 50
+  }),
+  {
+    name: 'MillerDocuments',
+    effect: getDocuments,
+    selectors: ({ getData }) => ({
+      getList: state => getData(state)?.results,
+      getCount: state => getData(state)?.count,
+      getFacets: state => getData(state)?.facets
+    }),
+    computed: {
+      count: 'getCount',
+      documents: 'getList',
+      facets: 'getFacets'
+    },
+  },
+)
+
+
+export const DocumentsPaginatedState = rj(
   rjList({
     pageSize: 50,
     pagination: limitOffsetPaginationAdapter,
   }),
   {
     name: 'MillerDocuments',
-    effect: (params) => {
-      return getDocuments(params)
-    },
+    effect: getDocuments,
     computed: {
       count: 'getCount',
-      documents: 'getList',
+      documents: 'getList'
     },
   },
+)
+
+export const DocumentsPaginatedCachedState = rj(
+  rjCache({
+    ns: 'millerPaginatedDocuments',
+    size: 50
+  }),
+  rjList({
+    pageSize: 50,
+    pagination: limitOffsetPaginationAdapter
+  }),
+  {
+    name: 'MillerDocuments',
+    effect: getDocuments,
+    computed: {
+      count: 'getCount',
+      documents: 'getList'
+    }
+  }
 )
