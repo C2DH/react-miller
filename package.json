@@ -4,15 +4,15 @@
   "license": "AGPL-3.0",
   "version": "1.0.0-beta.1",
   "author": "c2dh (https://c2dh.uni.lu)",
-  "main": "lib/index.cjs.js",
-  "module": "lib/index.es.js",
-  "types": "lib/index.d.ts",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.es.js",
+  "types": "dist/index.d.ts",
   "exports": {
-    "import": "./lib/index.es.js",
-    "require": "./lib/index.cjs.js"
+    "import": "./dist/index.es.js",
+    "require": "./dist/index.cjs.js"
   },
   "files": [
-    "lib"
+    "dist"
   ],
   "repository": {
     "type": "git",
@@ -26,7 +26,7 @@
     "rest-api"
   ],
   "scripts": {
-    "build": "rimraf lib && rollup -c && tsc --project tsconfig.build.json",
+    "build": "rimraf dist && rollup -c && tsc --project tsconfig.build.json",
     "format": "prettier --write .",
     "dev": "webpack-dev-server"
   },

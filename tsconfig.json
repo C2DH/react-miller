@@ -27,5 +27,5 @@
     }
   },
   "include": ["src/**/*", "example/**/*"],
-  "exclude": ["lib/**/*"]
+  "exclude": ["dist/**/*"]
 }
