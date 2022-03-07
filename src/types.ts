@@ -96,6 +96,11 @@ export interface MillerFacets {
   [key: string]: { [key: string]: any; count: number }[]
 }
 
+export interface MillerFacetsResponse {
+  count: number
+  facets: MillerFacets
+}
+
 export interface MillerPaginatedResponse<Results = any[]> {
   count: number
   next: string | null

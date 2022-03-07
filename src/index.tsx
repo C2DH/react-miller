@@ -15,7 +15,7 @@ import {
   MillerConfig,
   MillerDocumenntInList,
   MillerDocumentDetail,
-  MillerFacets,
+  MillerFacetsResponse,
   MillerPaginatedResponse,
   MillerPaginatedResponseWithFacets,
   MillerStory,
@@ -101,7 +101,7 @@ export function useDocuments(
 
 export function useDocumentsFacets(
   options?: UseQueryMillerOptions
-): [MillerFacets | undefined, UseQueryOtherResult] {
+): [MillerFacetsResponse | undefined, UseQueryOtherResult] {
   const getJSON = useGetJSON()
   const { params: givenParams, ...queryOptions } = options ?? {}
   const params = {
@@ -115,7 +115,11 @@ export function useDocumentsFacets(
     ({ signal }) => getJSON(`/document/`, { signal, params }),
     queryOptions
   )
-  return [data?.facets, other]
+
+  const resultData = data
+    ? { facets: data.facets, count: data.count }
+    : undefined
+  return [resultData, other]
 }
 
 type UseInfiniteQueryMillerOptions = Omit<

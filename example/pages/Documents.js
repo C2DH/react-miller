@@ -40,7 +40,7 @@ export default function Documents() {
   }
   const filtersOn = useFilterRedirect()
 
-  const [facets] = useDocumentsFacets({
+  const [docsFacets] = useDocumentsFacets({
     params: {
       facets: 'data__type',
     },
@@ -70,25 +70,28 @@ export default function Documents() {
             })
           }
         />
-        {facets && (
-          <div>
-            <select
-              value={filtersUI.data__type ?? ''}
-              onChange={(e) => {
-                setSearchParams({
-                  ...filtersUI,
-                  data__type: e.target.value,
-                })
-              }}
-            >
-              <option value={''}>-- ALL --</option>
-              {facets.data__type.map((f) => (
-                <option key={f.data__type} value={f.data__type}>
-                  {f.data__type} ({f.count})
-                </option>
-              ))}
-            </select>
-          </div>
+        {docsFacets && (
+          <>
+            <div>
+              <select
+                value={filtersUI.data__type ?? ''}
+                onChange={(e) => {
+                  setSearchParams({
+                    ...filtersUI,
+                    data__type: e.target.value,
+                  })
+                }}
+              >
+                <option value={''}>-- ALL --</option>
+                {docsFacets.facets.data__type.map((f) => (
+                  <option key={f.data__type} value={f.data__type}>
+                    {f.data__type} ({f.count})
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>ALL TOTAL {docsFacets.count}</div>
+          </>
         )}
       </div>
 
