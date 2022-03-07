@@ -2,7 +2,7 @@
   "name": "@c2dh/react-miller",
   "description": "React hooks for Miller django app",
   "license": "AGPL-3.0",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.2",
   "author": "c2dh (https://c2dh.uni.lu)",
   "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
