@@ -1,4 +1,4 @@
-import { useStories, useStory } from 'react-miller'
+import { useStory } from 'react-miller'
 import { useParams } from 'react-router-dom'
 
 export default function Story() {

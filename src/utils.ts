@@ -1,6 +1,11 @@
 import axios, { AxiosRequestConfig } from 'axios'
 import { useCallback, useContext, useMemo } from 'react'
 import { MillerContext } from './context'
+import {
+  MillerModule,
+  MillerRelatedDocumenntInList,
+  MillerStory,
+} from './types'
 
 function isObjectLike(data: any): data is Record<string, null> {
   return data !== null && typeof data === 'object'
@@ -93,10 +98,79 @@ export function useTranslator() {
     [lang, langs, fallbackLang]
   )
 }
+
 export function useTranslate(data: any) {
   const { langs, lang, fallbackLang } = useContext(MillerContext)
   return useMemo(
     () => translate(data, lang, langs, fallbackLang),
     [lang, langs, fallbackLang, data]
   )
+}
+
+export function mapStoryWithRelatedModulesDocuments(
+  story: MillerStory
+): MillerStory {
+  // No modules for this story!
+  if (!Array.isArray(story.contents?.modules)) {
+    return story
+  }
+
+  // Index docs by id
+  const documentsById = story.documents.reduce((all, doc) => {
+    all[doc.document_id] = doc
+    return all
+  }, {} as Record<number, MillerRelatedDocumenntInList>)
+
+  // NOTE:
+  // Ok at this points typings sucks ... a lot ... but for the module
+  // schema isn't so clear ... so for now this makumba works keep it ....
+  const mapId = (obj: any) => {
+    if (obj.id) {
+      const document = documentsById[obj.id] ?? null
+      return {
+        ...obj,
+        document,
+      }
+    }
+    return obj
+  }
+
+  const modules = story.contents!.modules.map((mod) => {
+    let mappedModule = mapId(mod)
+    if (mappedModule.object) {
+      mappedModule = {
+        ...mappedModule,
+        object: mapId(mappedModule.object),
+      }
+    }
+    if (Array.isArray(mappedModule.objects)) {
+      mappedModule = {
+        ...mappedModule,
+        objects: mappedModule.objects.map(mapId),
+      }
+    }
+    if (Array.isArray(mappedModule.speakers)) {
+      mappedModule = {
+        ...mappedModule,
+        speakers: mappedModule.speakers.map(mapId),
+      }
+    }
+    if (Array.isArray(mappedModule.gallery?.objects)) {
+      mappedModule = {
+        ...mappedModule,
+        gallery: {
+          ...mappedModule.gallery,
+          objects: mappedModule.gallery.objects.map(mapId),
+        },
+      }
+    }
+    return mappedModule
+  })
+  return {
+    ...story,
+    contents: {
+      ...story.contents,
+      modules,
+    },
+  }
 }

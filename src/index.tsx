@@ -20,7 +20,12 @@ import {
   MillerPaginatedResponseWithFacets,
   MillerStory,
 } from './types'
-import { useGetJSON, useTranslate, useTranslator } from './utils'
+import {
+  mapStoryWithRelatedModulesDocuments,
+  useGetJSON,
+  useTranslate,
+  useTranslator,
+} from './utils'
 
 export function Miller({
   client,
@@ -203,10 +208,16 @@ export function useStories(
 
 export function useStory(
   idOrSlug: number | string,
-  options?: UseQueryMillerOptions
+  options?: UseQueryMillerOptions & {
+    mapModulesWithRelatedDocuments?: boolean
+  }
 ): [MillerStory | undefined, UseQueryOtherResult] {
   const getJSON = useGetJSON()
-  const { params: givenParams, ...queryOptions } = options ?? {}
+  const {
+    params: givenParams,
+    mapModulesWithRelatedDocuments = true,
+    ...queryOptions
+  } = options ?? {}
   const params = {
     ...BASE_MILLER_PARAMS,
     ...givenParams,
@@ -216,5 +227,14 @@ export function useStory(
     ({ signal }) => getJSON(`/story/${idOrSlug}/`, { params, signal }),
     queryOptions
   )
-  return [useTranslate(data), other]
+  const mappedData = useMemo(() => {
+    if (!mapModulesWithRelatedDocuments) {
+      return data
+    }
+    if (!data) {
+      return data
+    }
+    return mapStoryWithRelatedModulesDocuments(data)
+  }, [data, mapModulesWithRelatedDocuments])
+  return [useTranslate(mappedData), other]
 }

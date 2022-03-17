@@ -85,6 +85,10 @@ export interface MillerDocumenntInList extends BaseMillerDocument {
   mimetype: string
 }
 
+export interface MillerRelatedDocumenntInList {
+  document_id: number
+}
+
 export interface MillerDocumentDetail extends BaseMillerDocument {
   copyrights: string
   documents: any[]
@@ -141,7 +145,6 @@ export interface MillerTag {
   data: any
 }
 
-// TODO: Add all the logic of modules + chapters ....
 export interface MillerStoryData {
   color: string
   title: string
@@ -150,6 +153,16 @@ export interface MillerStoryData {
   background: string
   count_modules?: number
 }
+
+export interface MillerModule {
+  module: string
+  [key: string]: any
+}
+
+export interface MillerModuleContents {
+  modules: MillerModule[]
+}
+
 export interface MillerStory {
   id: number
   slug: string
@@ -159,9 +172,11 @@ export interface MillerStory {
   date_last_modified: string
   status: string
   covers: MillerCover[]
+  documents: MillerRelatedDocumenntInList[]
   // TODO: Improve type
   authors: any[]
   tags: MillerTag[]
   owner: MillerUser
   data: MillerStoryData
+  contents?: MillerModuleContents
 }
