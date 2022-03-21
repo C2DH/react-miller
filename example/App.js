@@ -5,6 +5,7 @@ import About from './pages/About'
 import Home from './pages/Home'
 import Story from './pages/Story'
 import Doc from './pages/Doc'
+import Theme from './pages/Theme'
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/story/:idOrSlug' element={<Story />} />
+          <Route path='/theme/:idOrSlug' element={<Theme />} />
           <Route path='/docs' element={<Documents />} />
           <Route path='/docs/filter' element={<Documents />} />
           <Route path='/doc/:id' element={<Doc />} />

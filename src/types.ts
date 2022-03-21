@@ -154,6 +154,15 @@ export interface MillerStoryData {
   count_modules?: number
 }
 
+export interface MillerStoryWithChaptersData {
+  color: string
+  title: string
+  abstract: string
+  chapters: MillerStory[]
+  background: string
+  count_modules?: number
+}
+
 export interface MillerModule {
   module: string
   [key: string]: any
@@ -163,7 +172,7 @@ export interface MillerModuleContents {
   modules: MillerModule[]
 }
 
-export interface MillerStory {
+export interface BaseMillerStory<TData = any> {
   id: number
   slug: string
   short_url: string
@@ -177,6 +186,11 @@ export interface MillerStory {
   authors: any[]
   tags: MillerTag[]
   owner: MillerUser
-  data: MillerStoryData
+  data: TData
   contents?: MillerModuleContents
 }
+
+export type MillerStory = BaseMillerStory<MillerStoryData>
+
+export type MillerStoryWithChapters =
+  BaseMillerStory<MillerStoryWithChaptersData>

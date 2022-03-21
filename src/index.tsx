@@ -19,6 +19,7 @@ import {
   MillerPaginatedResponse,
   MillerPaginatedResponseWithFacets,
   MillerStory,
+  MillerStoryWithChapters,
 } from './types'
 import {
   mapStoryWithRelatedModulesDocuments,
@@ -234,7 +235,66 @@ export function useStory(
     if (!data) {
       return data
     }
-    return mapStoryWithRelatedModulesDocuments(data)
+    return mapStoryWithRelatedModulesDocuments<MillerStory>(data)
+  }, [data, mapModulesWithRelatedDocuments])
+  return [useTranslate(mappedData), other]
+}
+
+export function useStoryWithChapters(
+  idOrSlug: number | string,
+  options?: UseQueryMillerOptions & {
+    mapModulesWithRelatedDocuments?: boolean
+  }
+): [MillerStoryWithChapters | undefined, UseQueryOtherResult] {
+  const getJSON = useGetJSON()
+  const {
+    params: givenParams,
+    mapModulesWithRelatedDocuments = true,
+    ...queryOptions
+  } = options ?? {}
+  const params = {
+    ...BASE_MILLER_PARAMS,
+    ...givenParams,
+  }
+  const { data, ...other } = useQuery(
+    ['story-with-chapters', idOrSlug, params],
+    ({ signal }) =>
+      getJSON(`/story/${idOrSlug}/`, { params, signal }).then((story) =>
+        Promise.all(
+          (story.data.chapters ?? []).map((id: number) =>
+            getJSON(`/story/${id}/`, {
+              signal,
+              params: BASE_MILLER_PARAMS,
+            })
+          )
+        ).then((chapters) => ({
+          ...story,
+          data: {
+            ...story.data,
+            chapters,
+          },
+        }))
+      ),
+    queryOptions
+  )
+  const mappedData = useMemo(() => {
+    if (!mapModulesWithRelatedDocuments) {
+      return data
+    }
+    if (!data) {
+      return data
+    }
+    let mappedData =
+      mapStoryWithRelatedModulesDocuments<MillerStoryWithChapters>(data)
+    return {
+      ...mappedData,
+      data: {
+        ...mappedData.data,
+        chapters: mappedData.data.chapters.map(
+          mapStoryWithRelatedModulesDocuments
+        ),
+      },
+    }
   }, [data, mapModulesWithRelatedDocuments])
   return [useTranslate(mappedData), other]
 }

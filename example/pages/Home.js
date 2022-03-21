@@ -21,6 +21,9 @@ export default function Home() {
             </p>
           </div>
         ))}
+      <div>
+        <Link to={'/theme/outline-1'}>Test Theme</Link>
+      </div>
     </div>
   )
 }

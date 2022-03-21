@@ -2,6 +2,7 @@ import axios, { AxiosRequestConfig } from 'axios'
 import { useCallback, useContext, useMemo } from 'react'
 import { MillerContext } from './context'
 import {
+  BaseMillerStory,
   MillerModule,
   MillerRelatedDocumenntInList,
   MillerStory,
@@ -107,9 +108,9 @@ export function useTranslate(data: any) {
   )
 }
 
-export function mapStoryWithRelatedModulesDocuments(
-  story: MillerStory
-): MillerStory {
+export function mapStoryWithRelatedModulesDocuments<
+  T extends BaseMillerStory = BaseMillerStory
+>(story: T): T {
   // No modules for this story!
   if (!Array.isArray(story.contents?.modules)) {
     return story
