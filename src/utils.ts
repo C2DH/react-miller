@@ -165,6 +165,15 @@ export function mapStoryWithRelatedModulesDocuments<
         },
       }
     }
+    if (mappedModule.background?.object) {
+      mappedModule = {
+        ...mappedModule,
+        background: {
+          ...mappedModule.background,
+          object: mapId(mappedModule.background.object),
+        },
+      }
+    }
     return mappedModule
   })
   return {
