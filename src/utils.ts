@@ -174,6 +174,15 @@ export function mapStoryWithRelatedModulesDocuments<
         },
       }
     }
+    if (Array.isArray(mappedModule.map?.objects)) {
+      mappedModule = {
+        ...mappedModule,
+        map: {
+          ...mappedModule.map,
+          objects: mappedModule.map.objects.map(mapId),
+        },
+      }
+    }
     return mappedModule
   })
   return {
