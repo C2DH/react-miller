@@ -1,5 +1,9 @@
 import { Fragment, useEffect, useRef } from 'react'
-import { useDocumentsFacets, useInfiniteDocuments } from 'react-miller'
+import {
+  useDocumentsFacets,
+  useGetFlatDocuments,
+  useInfiniteDocuments,
+} from 'react-miller'
 import {
   Link,
   useLocation,
@@ -57,9 +61,20 @@ export default function Documents() {
     },
   })
 
+  const getFlatDocs = useGetFlatDocuments()
+
   return (
     <div>
       <div style={{ display: 'flex' }}>
+        <button
+          onClick={() => {
+            getFlatDocs({ limit: 1000 }).then((flatDocs) => {
+              console.log('Flat Docs ~>', flatDocs)
+            })
+          }}
+        >
+          Get Flat Docs
+        </button>
         <input
           placeholder='Search'
           value={filtersUI.q}

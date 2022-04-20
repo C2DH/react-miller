@@ -31,7 +31,7 @@ export function useGetJSON() {
   return useCallback(
     <T = any, D = any>(
       path: string,
-      req: AxiosRequestConfig<D>
+      req: AxiosRequestConfig<D> = {}
     ): Promise<T> => {
       return axios
         .get(`${apiUrl}${path}`, {

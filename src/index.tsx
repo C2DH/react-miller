@@ -1,4 +1,4 @@
-import { ReactNode, useMemo } from 'react'
+import { ReactNode, useCallback, useMemo } from 'react'
 import {
   InfiniteData,
   QueryClient,
@@ -297,4 +297,24 @@ export function useStoryWithChapters(
     }
   }, [data, mapModulesWithRelatedDocuments])
   return [useTranslate(mappedData), other]
+}
+
+export function useGetFlatDocuments() {
+  const getJSON = useGetJSON()
+
+  return useCallback(async (params: Record<string, any> = {}) => {
+    const apiParams = { ...BASE_MILLER_PARAMS, ...params }
+    let paginatedDocs = await getJSON<
+      MillerPaginatedResponse<MillerDocumenntInList[]>
+    >(`/document/`, {
+      params: apiParams,
+    })
+    const flatDocs = paginatedDocs.results
+    while (paginatedDocs.next) {
+      const qs = paginatedDocs.next.split('?')[1] ?? ''
+      paginatedDocs = await getJSON(`/document/?${qs}`)
+      flatDocs.push(...paginatedDocs.results)
+    }
+    return flatDocs
+  }, [])
 }
