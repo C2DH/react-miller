@@ -36,6 +36,7 @@ export function Miller({
   langs,
   headers,
   children,
+  requestsCache,
 }: MillerConfig & {
   client: QueryClient
   children: ReactNode
@@ -47,8 +48,9 @@ export function Miller({
       fallbackLang,
       langs,
       headers,
+      requestsCache,
     }),
-    [apiUrl, lang, fallbackLang, langs, headers]
+    [apiUrl, lang, fallbackLang, langs, headers, requestsCache]
   )
   return (
     <QueryClientProvider client={client}>

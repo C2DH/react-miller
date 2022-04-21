@@ -27,20 +27,32 @@ function encodeParamasForMiller(
 }
 
 export function useGetJSON() {
-  const { apiUrl, headers } = useContext(MillerContext)
+  const { apiUrl, headers, requestsCache } = useContext(MillerContext)
   return useCallback(
-    <T = any, D = any>(
+    async <T = any, D = any>(
       path: string,
       req: AxiosRequestConfig<D> = {}
     ): Promise<T> => {
-      return axios
-        .get(`${apiUrl}${path}`, {
+      const url = `${apiUrl}${path}`
+
+      if (requestsCache && requestsCache.has(url)) {
+        return requestsCache.get(url)!
+      }
+
+      const data = await axios
+        .get(url, {
           headers,
           ...req,
           // TODO: Fix encoding of facets avoid facets[]
           params: req.params ? encodeParamasForMiller(req.params) : undefined,
         })
         .then((r) => r.data)
+
+      if (requestsCache) {
+        requestsCache.set(url, data)
+      }
+
+      return data
     },
     [apiUrl]
   )

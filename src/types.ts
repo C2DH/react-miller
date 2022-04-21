@@ -23,6 +23,12 @@ export interface MillerConfig {
    * Extra headers to inject
    */
   headers?: RequestHeaders
+
+  /**
+   * Global request cache, used as global cache when staticize a Miller Based Site
+   *
+   */
+  requestsCache?: Map<string, any>
 }
 
 export type RequestHeaders = Record<string, string | number | boolean>
