@@ -1,12 +1,7 @@
 import axios, { AxiosRequestConfig } from 'axios'
 import { useCallback, useContext, useMemo } from 'react'
 import { MillerContext } from './context'
-import {
-  BaseMillerStory,
-  MillerModule,
-  MillerRelatedDocumenntInList,
-  MillerStory,
-} from './types'
+import { BaseMillerStory, MillerRelatedDocumenntInList } from './types'
 
 function isObjectLike(data: any): data is Record<string, null> {
   return data !== null && typeof data === 'object'
@@ -34,22 +29,30 @@ export function useGetJSON() {
       req: AxiosRequestConfig<D> = {}
     ): Promise<T> => {
       const url = `${apiUrl}${path}`
+      // TODO: Fix encoding of facets avoid facets[]
+      const params = req.params ? encodeParamasForMiller(req.params) : undefined
 
-      if (requestsCache && requestsCache.has(url)) {
-        return requestsCache.get(url)!
+      let cacheKey: string | null = null
+      if (requestsCache) {
+        cacheKey = axios.getUri({
+          url,
+          params,
+        })
+        if (requestsCache.has(cacheKey)) {
+          return requestsCache.get(cacheKey)
+        }
       }
 
       const data = await axios
         .get(url, {
           headers,
           ...req,
-          // TODO: Fix encoding of facets avoid facets[]
-          params: req.params ? encodeParamasForMiller(req.params) : undefined,
+          params,
         })
         .then((r) => r.data)
 
-      if (requestsCache) {
-        requestsCache.set(url, data)
+      if (cacheKey && requestsCache) {
+        requestsCache.set(cacheKey, data)
       }
 
       return data
