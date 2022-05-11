@@ -1,7 +1,14 @@
-import { useStories } from 'react-miller'
+import {
+  usePrefetchStory,
+  usePrefetchStoryWithChapters,
+  useStories,
+} from 'react-miller'
 import { Link } from 'react-router-dom'
 
 export default function Home() {
+  const prefetchStory = usePrefetchStory()
+  const prefetchStoryWithChapters = usePrefetchStoryWithChapters()
+
   const [stories] = useStories({
     params: {
       filters: {
@@ -17,12 +24,26 @@ export default function Home() {
           <div key={story.id}>
             <h2>{story.data.title}</h2>
             <p>
-              <Link to={`/story/${story.slug}`}>#{story.slug}</Link>
+              <Link
+                onMouseOver={() => {
+                  prefetchStory(story.slug)
+                }}
+                to={`/story/${story.slug}`}
+              >
+                #{story.slug}
+              </Link>
             </p>
           </div>
         ))}
       <div>
-        <Link to={'/theme/outline-1'}>Test Theme</Link>
+        <Link
+          onMouseOver={() => {
+            prefetchStoryWithChapters('outline-1')
+          }}
+          to={'/theme/outline-1'}
+        >
+          Test Theme
+        </Link>
       </div>
     </div>
   )

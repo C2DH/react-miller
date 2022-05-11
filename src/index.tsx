@@ -263,13 +263,65 @@ export function useStory(
   return [useTranslate(mappedData), other]
 }
 
+export function usePrefetchStory() {
+  const queryClient = useQueryClient()
+  const getJSON = useGetJSON()
+  return useCallback(
+    (idOrSlug: number | string, options?: UseQueryMillerOptions) => {
+      const { params: givenParams, ...queryOptions } = options ?? {}
+      const params = {
+        ...BASE_MILLER_PARAMS,
+        ...givenParams,
+      }
+      return queryClient.prefetchQuery(
+        ['story', String(idOrSlug), params],
+        ({ signal }) => getJSON(`/story/${idOrSlug}/`, { params, signal }),
+        queryOptions
+      )
+    },
+    [queryClient, getJSON]
+  )
+}
+
+function useGetJSONStoryWithChapters() {
+  const getJSON = useGetJSON()
+  return useCallback(
+    (
+      signal: AbortSignal | undefined,
+      idOrSlug: number | string,
+      params?: Record<string, any>
+    ) =>
+      getJSON(`/story/${idOrSlug}/`, { params, signal }).then((story) =>
+        Promise.all(
+          (story.data.chapters ?? []).map((id: number) =>
+            getJSON(`/story/${id}/`, {
+              signal,
+              params: BASE_MILLER_PARAMS,
+            })
+          )
+        ).then(
+          (chapters) =>
+            ({
+              ...story,
+              data: {
+                ...story.data,
+                chapters,
+              },
+            } as MillerStoryWithChapters)
+        )
+      ),
+
+    [getJSON]
+  )
+}
+
 export function useStoryWithChapters(
   idOrSlug: number | string,
   options?: UseQueryMillerOptions & {
     mapModulesWithRelatedDocuments?: boolean
   }
 ): [MillerStoryWithChapters | undefined, UseQueryOtherResult] {
-  const getJSON = useGetJSON()
+  const getJSONStoryWithChapters = useGetJSONStoryWithChapters()
   const {
     params: givenParams,
     mapModulesWithRelatedDocuments = true,
@@ -280,24 +332,8 @@ export function useStoryWithChapters(
     ...givenParams,
   }
   const { data, ...other } = useQuery(
-    ['story-with-chapters', idOrSlug, params],
-    ({ signal }) =>
-      getJSON(`/story/${idOrSlug}/`, { params, signal }).then((story) =>
-        Promise.all(
-          (story.data.chapters ?? []).map((id: number) =>
-            getJSON(`/story/${id}/`, {
-              signal,
-              params: BASE_MILLER_PARAMS,
-            })
-          )
-        ).then((chapters) => ({
-          ...story,
-          data: {
-            ...story.data,
-            chapters,
-          },
-        }))
-      ),
+    ['story-with-chapters', String(idOrSlug), params],
+    ({ signal }) => getJSONStoryWithChapters(signal, idOrSlug, params),
     queryOptions
   )
   const mappedData = useMemo(() => {
@@ -320,6 +356,26 @@ export function useStoryWithChapters(
     }
   }, [data, mapModulesWithRelatedDocuments])
   return [useTranslate(mappedData), other]
+}
+
+export function usePrefetchStoryWithChapters() {
+  const queryClient = useQueryClient()
+  const getJSONStoryWithChapters = useGetJSONStoryWithChapters()
+  return useCallback(
+    (idOrSlug: number | string, options?: UseQueryMillerOptions) => {
+      const { params: givenParams, ...queryOptions } = options ?? {}
+      const params = {
+        ...BASE_MILLER_PARAMS,
+        ...givenParams,
+      }
+      return queryClient.prefetchQuery(
+        ['story-with-chapters', String(idOrSlug), params],
+        ({ signal }) => getJSONStoryWithChapters(signal, idOrSlug, params),
+        queryOptions
+      )
+    },
+    [queryClient, getJSONStoryWithChapters]
+  )
 }
 
 export function useGetFlatDocuments() {
