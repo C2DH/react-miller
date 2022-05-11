@@ -7,6 +7,7 @@ import {
   UseInfiniteQueryOptions,
   UseInfiniteQueryResult,
   useQuery,
+  useQueryClient,
   UseQueryOptions,
   UseQueryResult,
 } from 'react-query'
@@ -70,7 +71,7 @@ const BASE_MILLER_PARAMS: Record<string, any> = {
 }
 
 export function useDocument(
-  id: number,
+  idOrSlug: number | string,
   options?: UseQueryMillerOptions
 ): [MillerDocumentDetail | undefined, UseQueryOtherResult] {
   const getJSON = useGetJSON()
@@ -80,11 +81,31 @@ export function useDocument(
     ...givenParams,
   }
   const { data, ...other } = useQuery(
-    ['document', id, params],
-    ({ signal }) => getJSON(`/document/${id}/`, { params, signal }),
+    ['document', String(idOrSlug), params],
+    ({ signal }) => getJSON(`/document/${idOrSlug}/`, { params, signal }),
     queryOptions
   )
   return [useTranslate(data), other]
+}
+
+export function usePrefetchDocument() {
+  const queryClient = useQueryClient()
+  const getJSON = useGetJSON()
+  return useCallback(
+    (idOrSlug: number | string, options?: UseQueryMillerOptions) => {
+      const { params: givenParams, ...queryOptions } = options ?? {}
+      const params = {
+        ...BASE_MILLER_PARAMS,
+        ...givenParams,
+      }
+      return queryClient.prefetchQuery(
+        ['document', String(idOrSlug), params],
+        ({ signal }) => getJSON(`/document/${idOrSlug}/`, { params, signal }),
+        queryOptions
+      )
+    },
+    [queryClient, getJSON]
+  )
 }
 
 export function useDocuments(
@@ -226,7 +247,7 @@ export function useStory(
     ...givenParams,
   }
   const { data, ...other } = useQuery(
-    ['story', idOrSlug, params],
+    ['story', String(idOrSlug), params],
     ({ signal }) => getJSON(`/story/${idOrSlug}/`, { params, signal }),
     queryOptions
   )

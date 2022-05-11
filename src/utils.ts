@@ -57,7 +57,7 @@ export function useGetJSON() {
 
       return data
     },
-    [apiUrl]
+    [apiUrl, headers, requestsCache]
   )
 }
 

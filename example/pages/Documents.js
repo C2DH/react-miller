@@ -3,6 +3,7 @@ import {
   useDocumentsFacets,
   useGetFlatDocuments,
   useInfiniteDocuments,
+  usePrefetchDocument,
 } from 'react-miller'
 import {
   Link,
@@ -63,6 +64,8 @@ export default function Documents() {
 
   const getFlatDocs = useGetFlatDocuments()
 
+  const prefetchDocument = usePrefetchDocument()
+
   return (
     <div>
       <div style={{ display: 'flex' }}>
@@ -120,8 +123,10 @@ export default function Documents() {
                     key={doc.id}
                     style={{ width: 150, border: '1px solid deeppink' }}
                   >
-                    <Link to={`/doc/${doc.id}`}>
-                      <h4>{doc.data.title}</h4>
+                    <Link to={`/doc/${doc.id}`} onMouseOver={() => {
+                      prefetchDocument(doc.id)
+                    }}>
+                      <h4>{doc.data.title} {doc.id}</h4>
                       <img
                         style={{ width: 100 }}
                         src={doc.snapshot ?? doc.attachment}
