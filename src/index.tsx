@@ -35,6 +35,7 @@ export function Miller({
   lang,
   fallbackLang,
   langs,
+  disableTranslate,
   headers,
   children,
   requestsCache,
@@ -50,8 +51,17 @@ export function Miller({
       langs,
       headers,
       requestsCache,
+      disableTranslate,
     }),
-    [apiUrl, lang, fallbackLang, langs, headers, requestsCache]
+    [
+      apiUrl,
+      lang,
+      fallbackLang,
+      langs,
+      headers,
+      requestsCache,
+      disableTranslate,
+    ]
   )
   return (
     <QueryClientProvider client={client}>
@@ -204,10 +214,10 @@ export function useInfiniteDocuments(
   )
 
   const translator = useTranslator()
-  const pages = useMemo(
-    () => (data ? data.pages.map(translator) : []),
-    [data?.pages, translator]
-  )
+  const pages = useMemo(() => (data ? data.pages.map(translator) : []), [
+    data?.pages,
+    translator,
+  ])
   const dataTranslated = data === undefined ? undefined : { ...data, pages }
 
   return [dataTranslated, other]
@@ -343,8 +353,9 @@ export function useStoryWithChapters(
     if (!data) {
       return data
     }
-    let mappedData =
-      mapStoryWithRelatedModulesDocuments<MillerStoryWithChapters>(data)
+    let mappedData = mapStoryWithRelatedModulesDocuments<MillerStoryWithChapters>(
+      data
+    )
     return {
       ...mappedData,
       data: {

@@ -11,6 +11,7 @@ import {
   useNavigate,
   useSearchParams,
 } from 'react-router-dom'
+import DocumentItem from '../components/DocumentItem'
 
 function removeEmptyFilters(deFilters) {
   return Object.keys(deFilters).reduce((out, key) => {
@@ -123,15 +124,12 @@ export default function Documents() {
                     key={doc.id}
                     style={{ width: 150, border: '1px solid deeppink' }}
                   >
-                    <Link to={`/doc/${doc.id}`} onMouseOver={() => {
-                      prefetchDocument(doc.id)
-                    }}>
-                      <h4>{doc.data.title} {doc.id}</h4>
-                      <img
-                        style={{ width: 100 }}
-                        src={doc.snapshot ?? doc.attachment}
-                      />
-                    </Link>
+                    <DocumentItem
+                      doc={doc}
+                      onMouseOver={() => {
+                        prefetchDocument(doc.id)
+                      }}
+                    />
                   </div>
                 ))}
             </Fragment>

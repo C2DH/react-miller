@@ -10,14 +10,7 @@ import Theme from './pages/Theme'
 export default function App() {
   return (
     <Router>
-      <div>
-        <Link to='/'>Home</Link>
-        {' | '}
-        <Link to='/about'>About</Link>
-        {' | '}
-        <Link to='/docs'>Docs</Link>
-      </div>
-      <Suspense fallback={<div>Loadin Y Documets....</div>}>
+      <Suspense fallback={<div>Loading...</div>}>
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/story/:idOrSlug' element={<Story />} />

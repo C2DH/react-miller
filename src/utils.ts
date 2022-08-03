@@ -108,19 +108,27 @@ function translate(
 }
 
 export function useTranslator() {
-  const { langs, lang, fallbackLang } = useContext(MillerContext)
+  const { langs, lang, fallbackLang, disableTranslate } = useContext(
+    MillerContext
+  )
   return useCallback(
-    (data) => translate(data, lang, langs, fallbackLang),
-    [lang, langs, fallbackLang]
+    (data) => {
+      if (disableTranslate) return data
+      return translate(data, lang, langs, fallbackLang)
+    },
+    [lang, langs, fallbackLang, disableTranslate]
   )
 }
 
 export function useTranslate(data: any) {
-  const { langs, lang, fallbackLang } = useContext(MillerContext)
-  return useMemo(
-    () => translate(data, lang, langs, fallbackLang),
-    [lang, langs, fallbackLang, data]
+  const { langs, lang, fallbackLang, disableTranslate } = useContext(
+    MillerContext
   )
+  console.debug('useTranslate', '\n - lang', lang, disableTranslate)
+  return useMemo(() => {
+    if (disableTranslate) return data
+    return translate(data, lang, langs, fallbackLang)
+  }, [lang, langs, fallbackLang, data, disableTranslate])
 }
 
 export function mapStoryWithRelatedModulesDocuments<

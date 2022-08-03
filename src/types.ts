@@ -29,6 +29,11 @@ export interface MillerConfig {
    *
    */
   requestsCache?: Map<string, any>
+
+  /**
+   * Prevent automatic translation (optional)
+   */
+  disableTranslate?: boolean
 }
 
 export type RequestHeaders = Record<string, string | number | boolean>
@@ -198,5 +203,4 @@ export interface BaseMillerStory<TData = any> {
 
 export type MillerStory = BaseMillerStory<MillerStoryData>
 
-export type MillerStoryWithChapters =
-  BaseMillerStory<MillerStoryWithChaptersData>
+export type MillerStoryWithChapters = BaseMillerStory<MillerStoryWithChaptersData>

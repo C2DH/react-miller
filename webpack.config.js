@@ -1,4 +1,5 @@
 const path = require('path')
+const webpack = require('webpack')
 
 module.exports = {
   entry: './example/index.js',
@@ -18,12 +19,12 @@ module.exports = {
     port: 9000,
     proxy: {
       '/api': {
-        target: 'https://timestrata.be',
+        target: process.env.PROXY || 'http://localhost',
         secure: false,
         changeOrigin: true,
       },
       '/media': {
-        target: 'https://timestrata.be',
+        target: process.env.PROXY || 'http://localhost',
         secure: false,
         changeOrigin: true,
       },
@@ -51,4 +52,15 @@ module.exports = {
       'react-miller': path.resolve(__dirname, 'src'),
     },
   },
+  plugins: [
+    new webpack.ProvidePlugin({
+      process: 'process/browser',
+    }),
+    new webpack.DefinePlugin({
+      'process.env': JSON.stringify({
+        PROXY: process.env.PROXY || 'http://localhost',
+        LANGS: process.env.LANGS || 'en_GB,fr_FR,de_DE,it_IT',
+      }),
+    }),
+  ],
 }
