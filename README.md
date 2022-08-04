@@ -1,76 +1,62 @@
-# react-miller
+# React Miller
 
-> Made with create-react-library
+Basic, powerful react hooks to get `stories`and `documents` from our Miller API (django powered REST api).
+THis library is basic a wrapper for react-query(v3.39) adapted to multilanguage translation
+and with shortcuts for usual usage.
 
-[![NPM](https://img.shields.io/npm/v/@c2dh/react-miller.svg)](https://www.npmjs.com/package/@c2dh/react-miller) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+usage:
 
-A simple piece of code that deals with effects while loading Miller REST api instance for **stories** and for **documents**
+Wrap your `App` inside the `Miller` context and initalize a `QueryClient` (see [react-query](https://tanstack.com/query/v4/docs/overview) library)
 
-We make use of the nice library [react-rocketjump](https://inmagik.github.io/react-rocketjump/docs/quickstart) to handle side effects, like `pending`, `loading` or to wrap our list endpoints with its convenient [List plugin](https://inmagik.github.io/react-rocketjump/docs/plugin-list).
+```javascript
+import { Miller } from 'react-miller'
+import { QueryClient } from 'react-query'
+import ReactDOM from 'react-dom'
+import App from './App'
 
-## Install
+ReactDOM.render(
+  <Miller
+    client={new QueryClient()}
+    apiUrl={'/api'}
+    langs={langs}
+    lang={lang}
+    disableTranslate={disableTranslate}
+    headers={{
+      'X-MILLER-TEST': 'Hello Miller :)',
+    }}
+  >
+    <App />
+  </Miller>,
+  document.getElementById('root')
+)
 
-```bash
-npm install --save @c2dh/react-miller
+// ...
 ```
 
-
-## Usage
-Note that `react-miller` hooks require a `language` param. Our implementation is usually coupled together with 'react-i18next' that provide us with a nice `useTranslation`
-hook, but feel free to use whatever it suits your needs!
-
-### useStory
-Used to retrieve one single story, it is a hook for the the endpoint `/api/story/<id>`)
-
-```jsx
-  import React from 'react'
-  import { useStory } from 'react-miller'
-
-  const Home = () => {
-    const [homeStory, { error }] = useStory('home', {
-      language: 'it_IT',
-      defaultLanguage: 'en_GB',
-      cached: true,
-    })
-    return (
-      <h1 className="Home">{homeStory?.title}</h1>
-    )
-  }
-
+```javascript
+const [data] = useStories({
+  params: {
+    exclude: {
+      tags__slug: 'static',
+    },
+  },
+  suspense: false,
+})
 ```
 
-### useStories
-Used to retrieve multiple stories, with optional filters.
+## Development & API test
 
-```jsx
-  import React from 'react'
-  import { useCachedStories } from 'react-miller'
+Local development allows you to set basic to test the library against different API
 
-  const ListOfStories = () => {
-    const [stories, pagination, { error }] = useStories({
-      filters: {
-        tags__slug: 'theme'
-      }
-    }, {
-      language: 'it_IT',
-      defaultLanguage: 'en_GB',
-      cached: true,
-    })
+```
+yarn install
 
-    if (!stories) {
-      return null
-    }
-
-    return (
-      <ol className="ListOfStories">
-        {stories.map((story) => (
-          <li key={story.id}>{story.title}</li>
-        )}
-      </ol>
-    )
-  }
+PROXY=http://your-proxy LANGS=en_GB,fr_FR yarn run dev
 ```
 
-## Development
-From the repo folder, just do `yarn link` then `yarn start`. To use the development version into your project,
-go to your project base folder and do `yarn link @c2dh/react-miller`
+Default env values:
+
+```
+PROXY=http://localhost
+LANGS=en_GB,fr_FR,de_DE,it_IT
+```

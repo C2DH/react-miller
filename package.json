@@ -1,69 +1,65 @@
 {
   "name": "@c2dh/react-miller",
-  "version": "0.1.0",
-  "description": "API client for Miller django app",
-  "main": "dist/index.js",
-  "module": "dist/index.modern.js",
-  "source": "src/index.js",
-  "engines": {
-    "node": ">=10"
-  },
-  "scripts": {
-    "build": "microbundle-crl --no-compress --format modern,cjs",
-    "start": "microbundle-crl watch --no-compress --format modern,cjs",
-    "prepare": "run-s build",
-    "test": "run-s test:unit test:lint test:build",
-    "test:build": "run-s build",
-    "test:lint": "eslint .",
-    "test:unit": "cross-env CI=1 react-scripts test --env=jsdom",
-    "test:watch": "react-scripts test --env=jsdom",
-    "predeploy": "cd example && yarn install && yarn run build",
-    "deploy": "gh-pages -d example/build"
-  },
-  "peerDependencies": {
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1"
-  },
-  "devDependencies": {
-    "babel-eslint": "^10.1.0",
-    "cross-env": "^7.0.3",
-    "eslint": "^8.9.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-config-standard": "^16.0.3",
-    "eslint-config-standard-react": "^11.0.1",
-    "eslint-plugin-import": "^2.25.4",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-promise": "^6.0.0",
-    "eslint-plugin-react": "^7.28.0",
-    "eslint-plugin-standard": "^5.0.0",
-    "gh-pages": "^3.2.3",
-    "microbundle-crl": "^0.13.11",
-    "npm-run-all": "^4.1.5",
-    "prettier": "^2.5.1",
-    "react-rocketjump": "^2.6.2",
-    "react-scripts": "^5.0.0",
-    "shallow-equal": "^1.2.1"
+  "description": "React hooks for Miller django app",
+  "license": "AGPL-3.0",
+  "version": "1.0.0",
+  "author": "c2dh (https://c2dh.uni.lu)",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.es.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    "import": "./dist/index.es.js",
+    "require": "./dist/index.cjs.js"
   },
   "files": [
     "dist"
   ],
-  "dependencies": {
-    "axios": "^0.26.0"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/C2DH/react-miller.git"
+  },
+  "bugs": {
+    "url": "https://github.com/C2DH/react-miller/issues"
   },
   "keywords": [
     "miller",
     "rest-api"
   ],
-  "author": "c2dh (https://c2dh.uni.lu)",
-  "license": "AGPL-3.0",
-  "bugs": {
-    "url": "https://github.com/C2DH/react-miller/issues"
+  "scripts": {
+    "build": "rimraf dist && rollup -c && tsc --project tsconfig.build.json",
+    "format": "prettier --write .",
+    "dev": "webpack-dev-server"
   },
-  "homepage": "https://github.com/C2DH/react-miller#readme",
-  "packageManager": "yarn@3.1.1"
+  "devDependencies": {
+    "@babel/core": "^7.17.5",
+    "@babel/plugin-transform-runtime": "^7.17.0",
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-react": "^7.16.7",
+    "@babel/preset-typescript": "^7.16.7",
+    "@rollup/plugin-babel": "^5.3.1",
+    "@rollup/plugin-node-resolve": "^13.1.3",
+    "@types/react": "^17.0.39",
+    "@types/react-dom": "^17.0.11",
+    "babel-loader": "^8.2.3",
+    "prettier": "^2.5.1",
+    "process": "^0.11.10",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-router-dom": "^6.2.2",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.68.0",
+    "typescript": "^4.6.2",
+    "webpack": "^5.69.1",
+    "webpack-cli": "^4.9.2",
+    "webpack-dev-server": "^4.7.4"
+  },
+  "peerDependencies": {
+    "react": "^17.0.2 || ^18.0.0-0",
+    "react-dom": "^17.0.2 || ^18.0.0-0"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.17.2",
+    "axios": "^0.26.0",
+    "react-query": "^3.39.0"
+  }
 }

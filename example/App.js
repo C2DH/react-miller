@@ -1,0 +1,26 @@
+import { Suspense } from 'react'
+import { BrowserRouter as Router, Link, Route, Routes } from 'react-router-dom'
+import Documents from './pages/Documents'
+import About from './pages/About'
+import Home from './pages/Home'
+import Story from './pages/Story'
+import Doc from './pages/Doc'
+import Theme from './pages/Theme'
+
+export default function App() {
+  return (
+    <Router>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/story/:idOrSlug' element={<Story />} />
+          <Route path='/theme/:idOrSlug' element={<Theme />} />
+          <Route path='/docs' element={<Documents />} />
+          <Route path='/docs/filter' element={<Documents />} />
+          <Route path='/doc/:id' element={<Doc />} />
+          <Route path='/about' element={<About />} />
+        </Routes>
+      </Suspense>
+    </Router>
+  )
+}
